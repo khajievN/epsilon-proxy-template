@@ -1,0 +1,22 @@
+version: '1.0'
+analysis:
+  name: Main
+  description: Analysis from main.py
+  script_file: main.py
+  requirements: requirements.txt
+datasets:
+- dataset_id: c4d9339a-5aa5-4035-99d2-b719c248cbce
+  archetype_id: gRfNIUTU8CrP
+  import_path: generated.models
+  function_name: create_dataset
+  archetype_path: generated/archetype.json
+privacy:
+  epsilon: 1.0
+execution:
+  environment: enclave
+  timeout: 300
+generated_at: '2026-03-16 13:08:29.218053'
+build_info:
+  command: epsilon build main.py
+  detected_datasets: 1
+  original_script: main.py

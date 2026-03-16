@@ -1,0 +1,30 @@
+{
+  "$id": "c4d9339a-5aa5-4035-99d2-b719c248cbce/gRfNIUTU8CrP",
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "title": "test1",
+  "type": "object",
+  "properties": {
+    "vitals": {
+      "type": "object",
+      "properties": {
+        "blood_pressure": {
+          "type": "object",
+          "description": "Blood Pressure"
+        },
+        "heart_rate": {
+          "type": "integer",
+          "description": "Heart Rate"
+        }
+      }
+    },
+    "patient": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "integer",
+          "description": "Age"
+        }
+      }
+    }
+  }
+}
