@@ -1,30 +1,55 @@
 {
-  "$id": "c4d9339a-5aa5-4035-99d2-b719c248cbce/gRfNIUTU8CrP",
+  "$id": "842d5995-c5c4-4c52-9384-6fd77d5915cb/BJBGDrkP6OAN",
   "$schema": "https://json-schema.org/draft/2020-12/schema#",
-  "title": "test1",
+  "title": "university study",
   "type": "object",
   "properties": {
-    "vitals": {
+    "subject": {
       "type": "object",
       "properties": {
-        "blood_pressure": {
+        "department": {
           "type": "object",
-          "description": "Blood Pressure"
+          "description": "Department"
         },
-        "heart_rate": {
-          "type": "integer",
-          "description": "Heart Rate"
+        "name": {
+          "type": "object",
+          "description": "Name"
+        },
+        "code": {
+          "type": "object",
+          "description": "Code"
         }
       }
     },
-    "patient": {
+    "university": {
       "type": "object",
       "properties": {
-        "age": {
+        "country": {
+          "type": "object",
+          "description": "Country"
+        },
+        "name": {
+          "type": "object",
+          "description": "Name"
+        },
+        "year": {
           "type": "integer",
-          "description": "Age"
+          "description": "Year"
         }
       }
+    },
+    "student": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "integer",
+          "description": "year"
+        }
+      }
+    },
+    "root": {
+      "type": "object",
+      "properties": {}
     }
   }
 }

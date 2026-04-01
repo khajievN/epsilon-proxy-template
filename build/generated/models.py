@@ -48,45 +48,94 @@ class DatasetWrapper:
         return Root(self.records[0]) if self.records else None
 
 
-class Vitals:
+class Subject:
     def __init__(self, data):
         self._data = data if data else {}
 
     @property
-    def blood_pressure(self):
+    def department(self):
         # Try direct access first (JSON format)
-        if 'blood_pressure' in self._data:
-            return self._data['blood_pressure']
+        if 'department' in self._data:
+            return self._data['department']
         # Try flattened access (CSV format)
         for k, v in self._data.items():
-            if k.endswith('.blood_pressure'):
+            if k.endswith('.department'):
                 return v
         return None
 
     @property
-    def heart_rate(self):
+    def name(self):
         # Try direct access first (JSON format)
-        if 'heart_rate' in self._data:
-            return self._data['heart_rate']
+        if 'name' in self._data:
+            return self._data['name']
         # Try flattened access (CSV format)
         for k, v in self._data.items():
-            if k.endswith('.heart_rate'):
+            if k.endswith('.name'):
+                return v
+        return None
+
+    @property
+    def code(self):
+        # Try direct access first (JSON format)
+        if 'code' in self._data:
+            return self._data['code']
+        # Try flattened access (CSV format)
+        for k, v in self._data.items():
+            if k.endswith('.code'):
                 return v
         return None
 
 
-class Patient:
+class University:
     def __init__(self, data):
         self._data = data if data else {}
 
     @property
-    def age(self):
+    def country(self):
         # Try direct access first (JSON format)
-        if 'age' in self._data:
-            return self._data['age']
+        if 'country' in self._data:
+            return self._data['country']
         # Try flattened access (CSV format)
         for k, v in self._data.items():
-            if k.endswith('.age'):
+            if k.endswith('.country'):
+                return v
+        return None
+
+    @property
+    def name(self):
+        # Try direct access first (JSON format)
+        if 'name' in self._data:
+            return self._data['name']
+        # Try flattened access (CSV format)
+        for k, v in self._data.items():
+            if k.endswith('.name'):
+                return v
+        return None
+
+    @property
+    def year(self):
+        # Try direct access first (JSON format)
+        if 'year' in self._data:
+            return self._data['year']
+        # Try flattened access (CSV format)
+        for k, v in self._data.items():
+            if k.endswith('.year'):
+                return v
+        return None
+
+
+class Student:
+    def __init__(self, data):
+        self._data = data if data else {}
+
+    @property
+    def year(self):
+        # Try direct access first (JSON format)
+        if 'year' in self._data:
+            return self._data['year']
+        # Try flattened access (CSV format)
+        for k, v in self._data.items():
+            if k.endswith('.year'):
                 return v
         return None
 
@@ -95,30 +144,63 @@ class Root:
     def __init__(self, data):
         self._data = data if data else {}
 
-    @property
-    def vitals(self):
-        # Handle nested field access with dot notation
-        if 'vitals' in self._data and isinstance(self._data['vitals'], dict):
-            return Vitals(self._data['vitals'])
-        # Handle flattened CSV data
-        flattened = {}
-        prefix = 'vitals.'
-        for k, v in self._data.items():
-            if k.startswith(prefix):
-                nested_key = k[len(prefix):]
-                flattened[nested_key] = v
-        return Vitals(flattened)
+
+class Root:
+    def __init__(self, data):
+        self._data = data if data else {}
 
     @property
-    def patient(self):
+    def subject(self):
         # Handle nested field access with dot notation
-        if 'patient' in self._data and isinstance(self._data['patient'], dict):
-            return Patient(self._data['patient'])
+        if 'subject' in self._data and isinstance(self._data['subject'], dict):
+            return Subject(self._data['subject'])
         # Handle flattened CSV data
         flattened = {}
-        prefix = 'patient.'
+        prefix = 'subject.'
         for k, v in self._data.items():
             if k.startswith(prefix):
                 nested_key = k[len(prefix):]
                 flattened[nested_key] = v
-        return Patient(flattened)
+        return Subject(flattened)
+
+    @property
+    def university(self):
+        # Handle nested field access with dot notation
+        if 'university' in self._data and isinstance(self._data['university'], dict):
+            return University(self._data['university'])
+        # Handle flattened CSV data
+        flattened = {}
+        prefix = 'university.'
+        for k, v in self._data.items():
+            if k.startswith(prefix):
+                nested_key = k[len(prefix):]
+                flattened[nested_key] = v
+        return University(flattened)
+
+    @property
+    def student(self):
+        # Handle nested field access with dot notation
+        if 'student' in self._data and isinstance(self._data['student'], dict):
+            return Student(self._data['student'])
+        # Handle flattened CSV data
+        flattened = {}
+        prefix = 'student.'
+        for k, v in self._data.items():
+            if k.startswith(prefix):
+                nested_key = k[len(prefix):]
+                flattened[nested_key] = v
+        return Student(flattened)
+
+    @property
+    def root(self):
+        # Handle nested field access with dot notation
+        if 'root' in self._data and isinstance(self._data['root'], dict):
+            return Root(self._data['root'])
+        # Handle flattened CSV data
+        flattened = {}
+        prefix = 'root.'
+        for k, v in self._data.items():
+            if k.startswith(prefix):
+                nested_key = k[len(prefix):]
+                flattened[nested_key] = v
+        return Root(flattened)
