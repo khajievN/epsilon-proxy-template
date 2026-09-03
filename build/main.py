@@ -7,9 +7,9 @@ def main():
 
     # Your analysis code here
     for record in dataset:
+        print(record.demographics.gender)
         # Example: Access fields from your archetype
         # print(record.field_name)
-        print(record.student.year)
         pass
 
     return {"result": "Analysis complete"}
