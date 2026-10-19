@@ -2,6 +2,7 @@ import json
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 # Groups smaller than this are suppressed in every output
@@ -20,7 +21,8 @@ GROUP_BY = ["demographics.gender", "outcome.diabetic"]
 
 def main():
     out_dir = os.environ.get("EPSILON_OUTPUT_DIR", "outputs")
-    os.makedirs(out_dir, exist_ok=True)
+    for sub in ("tables", "plots", "model"):
+        os.makedirs(os.path.join(out_dir, sub), exist_ok=True)
 
     df = pd.read_csv("generated/data.csv")
     print(f"Loaded {len(df)} records, columns: {sorted(df.columns)}")
@@ -41,7 +43,7 @@ def main():
     summary = groups[numeric].mean().round(2)
     summary.insert(0, "n", groups.size())
     summary = summary[summary["n"] >= MIN_CELL]
-    summary.to_csv(os.path.join(out_dir, "summary_by_group.csv"))
+    summary.to_csv(os.path.join(out_dir, "tables", "summary_by_group.csv"))
 
     # Counts per gender and outcome
     counts = groups.size()
@@ -65,10 +67,24 @@ def main():
     ax = data.plot(kind="bar", rot=0, title=f"Mean {measure} by group (n >= {MIN_CELL})")
     ax.set_ylabel(f"Mean {measure}")
     plt.tight_layout()
-    plt.savefig(os.path.join(out_dir, "bmi_by_group.png"), dpi=100)
+    plt.savefig(os.path.join(out_dir, "plots", "bmi_by_group.png"), dpi=100)
+
+    # Group means as a numpy array (a file type with no preview)
+    np.save(os.path.join(out_dir, "model", "group_means.npy"), summary[numeric].to_numpy())
+
+    # Short markdown report (no preview either; download only)
+    with open(os.path.join(out_dir, "report.md"), "w") as f:
+        f.write("# Diabetes risk summary\n\n")
+        f.write(f"Records: {len(df)}. Groups with fewer than {MIN_CELL} people are suppressed.\n\n")
+        f.write(f"Measures: {', '.join(numeric)}\n")
 
     print(summary.to_string())
-    print(f"Wrote {sorted(os.listdir(out_dir))}")
+    written = sorted(
+        os.path.relpath(os.path.join(root, name), out_dir)
+        for root, _, names in os.walk(out_dir)
+        for name in names
+    )
+    print(f"Wrote {written}")
     return {"result": "Analysis complete", "groups": int(len(summary))}
 
 
