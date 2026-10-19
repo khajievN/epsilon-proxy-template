@@ -15,42 +15,55 @@ NUMERIC = [
     "vitals.diastolic_bp",
 ]
 
+GROUP_BY = ["demographics.gender", "outcome.diabetic"]
+
 
 def main():
     out_dir = os.environ.get("EPSILON_OUTPUT_DIR", "outputs")
     os.makedirs(out_dir, exist_ok=True)
 
     df = pd.read_csv("generated/data.csv")
-    for col in NUMERIC:
+    print(f"Loaded {len(df)} records, columns: {sorted(df.columns)}")
+
+    # The real dataset may not have every column the dummy data has
+    numeric = [c for c in NUMERIC if c in df.columns]
+    missing = [c for c in NUMERIC + GROUP_BY if c not in df.columns]
+    if missing:
+        print(f"Skipping missing columns: {missing}")
+    group_by = [c for c in GROUP_BY if c in df.columns]
+    if not group_by or not numeric:
+        raise SystemExit("No grouping or numeric columns available")
+    for col in numeric:
         df[col] = pd.to_numeric(df[col], errors="coerce")
-    print(f"Loaded {len(df)} records")
 
     # Mean of the numeric measures per gender and diabetic outcome
-    groups = df.groupby(["demographics.gender", "outcome.diabetic"])
-    summary = groups[NUMERIC].mean().round(2)
+    groups = df.groupby(group_by)
+    summary = groups[numeric].mean().round(2)
     summary.insert(0, "n", groups.size())
     summary = summary[summary["n"] >= MIN_CELL]
     summary.to_csv(os.path.join(out_dir, "summary_by_group.csv"))
 
     # Counts per gender and outcome
-    counts = df.groupby(["demographics.gender", "outcome.diabetic"]).size()
+    counts = groups.size()
     counts = counts[counts >= MIN_CELL]
     with open(os.path.join(out_dir, "counts.json"), "w") as f:
         json.dump(
             {
                 "total": int(len(df)),
                 "min_cell": MIN_CELL,
-                "counts": {f"{g} / {o}": int(n) for (g, o), n in counts.items()},
+                "group_by": group_by,
+                "counts": {" / ".join(map(str, k if isinstance(k, tuple) else (k,))): int(n) for k, n in counts.items()},
             },
             f,
             indent=2,
         )
 
-    # Mean BMI by gender and diabetic outcome
-    bmi = summary["anthropometry.bmi"].unstack("outcome.diabetic")
-    ax = bmi.plot(kind="bar", rot=0, title=f"Mean BMI by gender and diabetic outcome (n >= {MIN_CELL})")
-    ax.set_xlabel("Gender")
-    ax.set_ylabel("Mean BMI")
+    # Mean of the first available measure (BMI when present) per group
+    measure = "anthropometry.bmi" if "anthropometry.bmi" in numeric else numeric[0]
+    series = summary[measure]
+    data = series.unstack(group_by[-1]) if len(group_by) > 1 else series
+    ax = data.plot(kind="bar", rot=0, title=f"Mean {measure} by group (n >= {MIN_CELL})")
+    ax.set_ylabel(f"Mean {measure}")
     plt.tight_layout()
     plt.savefig(os.path.join(out_dir, "bmi_by_group.png"), dpi=100)
 
