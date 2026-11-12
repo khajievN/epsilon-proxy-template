@@ -5,8 +5,8 @@ analysis:
   script_file: main.py
   requirements: requirements.txt
 datasets:
-- dataset_id: 96887846-2a4f-42f7-9471-52cc3a3b6a73
-  archetype_id: yAp2Fgy7HrJT
+- dataset_id: bab056a2-81e7-4b91-8c7a-ed6abbc4bf3c
+  archetype_id: nuJ8J33CjAWX
   import_path: generated.models
   function_name: create_dataset
   archetype_path: generated/archetype.json
