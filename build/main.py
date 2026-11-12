@@ -1,3 +1,4 @@
+# Scenario E2: the same analysis with one changed line, so the code digest differs
 import json
 import os
 
